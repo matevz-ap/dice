@@ -7,8 +7,8 @@ const games = {
         "white_offence": ["-", "-", "-", "-", "-", "surge", "crit", "hit"],
     },
     "armada": {
-        "red": ["-", "-", "hit", "hit", "hit", "hit", "crit", "crit"],
-        "blue": ["-", "-", "hit", "hit", "hit", "crit", "crit", "crit"],
+        "red": ["-", "-", "hit", "hit", "hit", "accuracy", "crit", "crit"],
+        "blue": ["hit", "hit", "hit", "accuracy", "accuracy", "crit", "crit", "crit"],
         "black": ["-", "-", "hit", "hit", "crit", "crit", "crit", "crit"],
     },
 }
@@ -20,19 +20,28 @@ select.onchange = function() {
     const dice = games[select.value];
     const diceContainer = document.getElementById("diceList");
     diceContainer.innerHTML = ""; // Clear previous dice
-
+    
     for (const [type, faces] of Object.entries(dice)) {
         const diceElement = document.createElement("div");
+        diceElement.innerHTML = `<strong>${type}</strong>:`;
         diceElement.classList.add("dice");
-        diceElement.innerHTML = `<strong>${type}</strong>: ${faces.join(", ")}`;
+        for (const face of faces) {
+            const faceElement = document.createElement("img");
+            faceElement.classList.add("face");
+            faceElement.src = `static/img/dice/${select.value}/${face}.webp`;
+            diceElement.appendChild(faceElement);
+        }
         diceContainer.appendChild(diceElement);
     }
 }
 
 rollButton.addEventListener("click", function() {
-    let rolls = [];
+    let rolls = document.getElementById("rolls");
+    rolls.innerHTML = "";
+
     for (const [type, faces] of Object.entries(games[select.value])) {
-        rolls.push(roll(faces));
+        const rollElement = document.createElement("img");
+        rollElement.src = `static/img/dice/${select.value}/${roll(faces)}.webp`;
+        rolls.appendChild(rollElement);
     }
-    alert(`You rolled: ${rolls.join(", ")}`);
 });
