@@ -5,7 +5,12 @@ const games = {
         "white_defence": ["-", "-", "-", "-", "shield", "surge"],
         "red_offence": ["-", "surge", "crit", "hit", "hit", "hit", "hit", "hit"],
         "white_offence": ["-", "-", "-", "-", "-", "surge", "crit", "hit"],
-    }
+    },
+    "armada": {
+        "red": ["-", "-", "hit", "hit", "hit", "hit", "crit", "crit"],
+        "blue": ["-", "-", "hit", "hit", "hit", "crit", "crit", "crit"],
+        "black": ["-", "-", "hit", "hit", "crit", "crit", "crit", "crit"],
+    },
 }
 
 const select = document.getElementById("game");
