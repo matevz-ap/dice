@@ -12,18 +12,21 @@
     <main>
         <div class="container">
             <h1>Dice Game</h1>
-            <details class="dropdown">
-                <summary>Games</summary>
-                <ul>
-                  <li><a href="#">Star Wars Legion</a></li>
-                  <li><a href="#">Warhammer</a></li>
-                </ul>
-              </details>
+            <select name="game" id="game">
+                <option value="">Select Game</option>
+                <option value="legion">Star Wars Legion</option>
+                <option value="bolt">Bolt Action</option>
+            </select>
+            <div id="diceList">
+                
+            </div>
+            <button id="roll">Roll</button>
             <p>Welcome to the Dice Game!</p>
         </div>
    
     </main>
     <footer>
     </footer>
+    <script type="module" src="index.js"></script>
 </body>
 </html>
