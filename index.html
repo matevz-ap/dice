@@ -3,34 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dice Game</title>
+    <title>Table Top Roller</title>
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <style>
+        body {
+    margin: 0;
+    align-items: center;
+    height: 100vh;
+}
+canvas {
+    border: 1px solid black;
+}   
+    </style>
 </head>
 <body>
-    <header>
-    </header>
-    <main>
-        <div class="container">
-            <h1>Dice Game</h1>
-            <select name="game" id="game">
-                <option value="">Select Game</option>
-                <option value="legion">Star Wars Legion</option>
-                <option value="armada">Star Wars Armada</option>
-            </select>
-            <div id="diceList">
+    <div class="container" style="position: fixed;">
+        <h1>Table Top Roller</h1>
+        <select name="game" id="game">
+            <option value="">Select Game</option>
+            <option value="legion">Star Wars Legion</option>
+            <option value="armada">Star Wars Armada</option>
+        </select>
+        <section id="diceList">
 
-            </div>
-            <button id="roll">Roll</button>
+        </section>
+        <section>
+        </section>
+        <section>
+            <button id="roll" style="width: 100%;">Roll</button>
+        </section>
+        <section>
             <h2>Results</h2>
             <div id="rolls">
-
             </div>
-            <p>Welcome to the Dice Game!</p>
-        </div>
-   
-    </main>
-    <footer>
-    </footer>
+        </section>
+    </div>
+    <canvas id="diceCanvas" width="300"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script type="module" src="index.js"></script>
 </body>
 </html>
