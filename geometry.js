@@ -1,4 +1,4 @@
-const radius = 1; // Size of the dice
+const radius = 1.5; // Size of the dice
 
 export function createDice(scene, x, y, z, faces) {
     let textures = [];
