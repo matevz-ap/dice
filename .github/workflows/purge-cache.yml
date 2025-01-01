@@ -1,9 +1,8 @@
-name: Purge Cloudflare Cache
+he
 
 on:
-  push:
-    branches:
-      - master
+  deployment_status:
+    types: [success]
 
 jobs:
   purge-cache:
