@@ -133,15 +133,10 @@ animate();
 
 select.onchange = function() {
     scene.clear();
-    diceSet = new DiceSet(select.value);
-    diceSet.display(scene)
+    diceSet = new DiceSet(select.value, scene);
+    diceSet.display()
 }
 
 rollButton.addEventListener("click", function() {
-    let rolls = document.getElementById("rolls");
-    rolls.innerHTML = "";
-
-    for (const roll of diceSet.roll()) {
-        rolls.appendChild(roll.display(diceSet.game));
-    }
+    diceSet.roll();
 });

@@ -23,3 +23,20 @@ export function createDice(scene, x, y, z, faces) {
     scene.add(dice);
     return dice;  
 }
+
+export function rotateDice(dice) {
+    const rotations = [
+        [0, 0, 0],              // Front face
+        [Math.PI, 0, 0],        // Back face
+        [0, Math.PI / 2, 0],    // Right face
+        [0, -Math.PI / 2, 0],   // Left face
+        [Math.PI / 2, 0, 0],    // Top face
+        [-Math.PI / 2, 0, 0]    // Bottom face
+      ];
+
+    // Randomly pick one of the rotations
+    const random = Math.floor(Math.random() * rotations.length);
+    const [x, y, z] = rotations[random];
+
+    dice.rotation.set(x, y, z);
+}

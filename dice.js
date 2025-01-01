@@ -1,4 +1,4 @@
-import { createDice } from "./geometry.js";
+import { createDice, rotateDice } from "./geometry.js";
 
 const games = {
     "legion": {
@@ -15,7 +15,8 @@ const games = {
 }
 
 export class Face {
-    constructor(value) {
+    constructor(dice, value) {
+        this.dice = dice;
         this.value = value;
     }
 
@@ -33,67 +34,68 @@ export class Face {
         return faceElement;
     }
 
-    texture(game) {
+    texture() {
         if (!this.value) return  "static/img/dice/empty.jpeg";
-        return `static/img/dice/${game}/${this.value}.webp`;
+        return `static/img/dice/${this.dice.diceSet.game}/${this.value}.webp`;
     }
 }
 
 export class Dice {
-    constructor(type, faces, game) {
-        this.game = game;
+    constructor(diceSet, type, faces) {
+        this.diceSet = diceSet;
         this.type = type;
+        this.mesh = null;
         this.faces = this.initFaces(faces);  
     }
 
     initFaces(faces) {
         const faceSet = [];
         for (const face of faces) {
-            faceSet.push(new Face(face));
+            faceSet.push(new Face(this, face));
         }
         return faceSet;
     }
 
     roll() {
-        return this.faces[Math.floor(Math.random() * this.faces.length)];
+        rotateDice(this.mesh);
     }
 
-    display(scene, index, game) {
+    display(index) {
         let faces = [];
         for (const face of this.faces) {
-            faces.push(face.texture(game));
+            faces.push(face.texture());
         }
-        return createDice(scene, -3 + index * 2, 0, 0, faces);
+        this.mesh = createDice(this.diceSet.scene, -3 + index * 2, 0, 0, faces);
+        return this.mesh;
     }
 }
 
 export class DiceSet {
-    constructor(game) {
+    constructor(game, scene) {
         this.game = game;
-        this.dice = this.initDice(games[game]);
+        this.scene = scene;
         this.diceMeshes = [];
+        this.dice = this.initDice();
     }
 
-    initDice(dice) {
+    initDice() {
         const diceSet = [];
-        for (const [type, faces] of Object.entries(dice)) {
-            diceSet.push(new Dice(type, faces));
+        for (const [type, faces] of Object.entries(games[this.game])) {
+            diceSet.push(new Dice(this, type, faces));
         }
         return diceSet;
     }
 
-    display(scene) {
+    display() {
         for (let i = 0; i < this.dice.length; i++) {
-            let diceMesh = this.dice[i].display(scene, i, this.game);
+            let diceMesh = this.dice[i].display(i);
             this.diceMeshes.push(diceMesh);
         }
     }
 
     roll() {
-        const results = [];
         for (const dice of this.dice) {
-            results.push(dice.roll());
+            dice.roll();
         }
-        return results;
     }
 }
