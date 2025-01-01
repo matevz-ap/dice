@@ -1,8 +1,9 @@
 name: Purge Cloudflare Cache
 
 on:
-  deployment_status:
-    types: [success]
+  pages_build_deployment:
+    types:
+      - completed
 
 jobs:
   purge-cache:
