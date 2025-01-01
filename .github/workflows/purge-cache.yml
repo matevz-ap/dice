@@ -1,4 +1,4 @@
-he
+name: Purge Cloudflare Cache
 
 on:
   deployment_status:
