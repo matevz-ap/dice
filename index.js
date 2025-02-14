@@ -27,13 +27,11 @@ let lastRotationY = 0;
 // Function to animate the scene (without automatic rotation)
 function animate() {
     requestAnimationFrame(animate);
-
-    // Render the scene
     renderer.render(scene, camera);
 }
 
-// Handle touch events to rotate the dice
-function onTouchMove(event) {
+
+function rotateDiceSet(event) {
     if (!isTouching || event.touches.length !== 1) return; // Only one finger
 
     const x = event.touches[0].clientX;
@@ -58,6 +56,11 @@ function onTouchMove(event) {
     lastY = y;
     lastRotationX = rotationX;
     lastRotationY = rotationY;
+}
+
+// Handle touch events to rotate the dice
+function onTouchMove(event) {
+    rotateDiceSet(event);
 }
 
 // Start touch interaction
