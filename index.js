@@ -163,6 +163,7 @@ rollButton.addEventListener("click", function() {
 });
 
 document.querySelector('#create_dice_set').addEventListener('click', () => {
+    scene.clear();
     diceSet = addDiceSet(scene);
     diceSet.display();
     add_dice_modal.close();
