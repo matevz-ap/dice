@@ -37,7 +37,7 @@ canvas {
     <!-- </div> -->
     <div class="p-2 fixed w-full">
         <div class="grid grid-cols-10 gap-2">
-            <div class="col-span-8">
+            <div class="col-span-7">
                 <select class="select select-bordered w-full" name="game" id="game">
                     <optgroup label="Board Games">
                         <option value="">Select dice set</option>
@@ -47,25 +47,27 @@ canvas {
                     <optgroup label="My dice sets"></optgroup>
                   </select>
             </div>
-            <div class="col-span-2">
-<button class="btn w-full" onclick="my_modal_1.showModal()">Add dice</button>
-<dialog id="my_modal_1" class="modal">
+            <div class="col-span-3">
+<button class="btn w-full" onclick="add_dice_modal.showModal()">Add dice</button>
+<dialog id="add_dice_modal" class="modal">
   <div class="modal-box">
     <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
       </form>
     <h3 class="text-lg font-bold mb-3">Create new dice set!</h3>
+    <form action="" id="dice_set_form">
+        <input type="text" name="diceSetName" id="dice_set_name" placeholder="Name your dice set" class="input input-bordered w-full" />
+        <div class="divider">Dices</div>
+        <div class="dices grid grid-cols gap-2">
+            <input type="number" class="input input-bordered w-full" id="dice_0" name="dice" placeholder="Number of faces" />
+        </div>
+    </form>
     <div>
-        <input type="number" class="input input-bordered w-full" placeholder="Number of faces" />
-    </div>
-    <div>
-        <button class="btn mt-3 w-full">+ Add dice</button>
+        <button class="btn mt-3 w-full" id="add_dice">+ Add dice</button>
     </div>
     <div class="modal-action">
-      <form method="dialog">
         <!-- if there is a button in form, it will close the modal -->
-        <button class="btn btn-primary">Create</button>
-      </form>
+        <button class="btn btn-primary" id="create_dice_set">Create</button>
     </div>
   </div>
 </dialog>

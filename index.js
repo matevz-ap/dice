@@ -1,5 +1,5 @@
 import { DiceSet } from './dice.js';
-
+import { addDiceSet, addDice } from './new_dice.js';
 
 const select = document.getElementById("game");
 const rollButton = document.getElementById("roll");
@@ -23,6 +23,20 @@ let lastX = 0;
 let lastY = 0;
 let lastRotationX = 0;
 let lastRotationY = 0;
+
+const games = {
+    "legion": {
+        "red_defence": ["", "", "block", "block", "defSurge"],
+        "white_defence": ["", "", "", "", "block", "defSurge"],
+        "red_offence": ["", "atkSurge", "crit", "hit", "hit", "hit", "hit", "hit"],
+        "white_offence": ["", "", "", "", "", "atkSurge", "crit", "hit"],
+    },
+    "armada": {
+        "red": ["", "", "hit", "hit", "hit", "accuracy", "crit", "crit"],
+        "blue": ["hit", "hit", "hit", "accuracy", "accuracy", "crit", "crit", "crit"],
+        "black": ["", "", "hit", "hit", "crit", "crit", "crit", "crit"],
+    },
+}
 
 // Function to animate the scene (without automatic rotation)
 function animate() {
@@ -96,7 +110,7 @@ document.addEventListener('mouseup', () => {
 });
 
 document.addEventListener('mousemove', (e) => {
-    if (!isTouching) return;
+    if (!isTouching || diceSet == undefined) return;
 
     const dx = e.clientX - lastX;
     const dy = e.clientY - lastY;
@@ -136,10 +150,17 @@ animate();
 
 select.onchange = function() {
     scene.clear();
-    diceSet = new DiceSet(select.value, scene);
+    diceSet = new DiceSet(select.value, scene, Object.entries(games[select.value]));
     diceSet.display()
 }
 
 rollButton.addEventListener("click", function() {
     diceSet.roll();
 });
+
+document.querySelector('#create_dice_set').addEventListener('click', () => {
+    diceSet = addDiceSet(scene);
+    diceSet.display();
+    add_dice_modal.close();
+});
+document.querySelector('#add_dice').addEventListener('click', addDice);

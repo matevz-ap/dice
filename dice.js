@@ -1,41 +1,14 @@
 import { createDice, rotateDice } from "./geometry.js";
 
-const games = {
-    "legion": {
-        "red_defence": ["", "", "block", "block", "defSurge"],
-        "white_defence": ["", "", "", "", "block", "defSurge"],
-        "red_offence": ["", "atkSurge", "crit", "hit", "hit", "hit", "hit", "hit"],
-        "white_offence": ["", "", "", "", "", "atkSurge", "crit", "hit"],
-    },
-    "armada": {
-        "red": ["", "", "hit", "hit", "hit", "accuracy", "crit", "crit"],
-        "blue": ["hit", "hit", "hit", "accuracy", "accuracy", "crit", "crit", "crit"],
-        "black": ["", "", "hit", "hit", "crit", "crit", "crit", "crit"],
-    },
-}
-
 export class Face {
     constructor(dice, value) {
         this.dice = dice;
         this.value = value;
     }
 
-    display(game) {
-        const faceElement = document.createElement("img");
-        faceElement.style.width = "40px";
-        faceElement.classList.add("face");
-    
-        if (!this.value) {
-            faceElement.src = "static/img/dice/empty.jpeg";
-            return faceElement;
-        }
-        
-        faceElement.src = `static/img/dice/${game}/${this.value}.webp`;
-        return faceElement;
-    }
-
     texture() {
         if (!this.value) return  "static/img/dice/empty.jpeg";
+        else if (this.dice.diceSet.game == "custom") return `static/img/dice/custom/${this.value}.png`;
         return `static/img/dice/${this.dice.diceSet.game}/${this.value}.webp`;
     }
 }
@@ -71,16 +44,16 @@ export class Dice {
 }
 
 export class DiceSet {
-    constructor(game, scene) {
+    constructor(game, scene, dice) {
         this.game = game;
         this.scene = scene;
         this.diceMeshes = [];
-        this.dice = this.initDice();
+        this.dice = this.initDice(dice);
     }
 
-    initDice() {
+    initDice(dice) {
         const diceSet = [];
-        for (const [type, faces] of Object.entries(games[this.game])) {
+        for (const [type, faces] of Object.entries(dice)) {
             diceSet.push(new Dice(this, type, faces));
         }
         return diceSet;
