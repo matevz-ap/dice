@@ -1,5 +1,5 @@
 import { DiceSet } from './dice.js';
-import { addDiceSet, addDice } from './new_dice.js';
+import { addDiceSet, addDice, loadDiceSets, loadDiceSet } from './new_dice.js';
 
 const select = document.getElementById("game");
 const rollButton = document.getElementById("roll");
@@ -150,7 +150,11 @@ animate();
 
 select.onchange = function() {
     scene.clear();
-    diceSet = new DiceSet(select.value, scene, Object.entries(games[select.value]));
+    if (games[select.value] == undefined) {
+        diceSet = loadDiceSet(select.value, scene);
+    } else {
+        diceSet = new DiceSet(select.value, scene, games[select.value]);
+    }
     diceSet.display()
 }
 
@@ -164,3 +168,9 @@ document.querySelector('#create_dice_set').addEventListener('click', () => {
     add_dice_modal.close();
 });
 document.querySelector('#add_dice').addEventListener('click', addDice);
+
+document.onreadystatechange = function() {
+    if (document.readyState === 'complete') {
+        loadDiceSets();
+    }
+}
