@@ -22,7 +22,7 @@ export function loadDiceSets() {
 export function loadDiceSet(diceSetName, scene) {
     let diceSets = JSON.parse(window.localStorage.getItem('dice_sets')) || {};
     if (diceSetName in diceSets) {
-        return new DiceSet("custom", scene, diceSets[diceSetName]);
+        return new DiceSet("custom", scene, diceSets[diceSetName], {});
     }
 }
 
@@ -44,7 +44,7 @@ export function addDiceSet(scene) {
     });
 
     storeDiceSet(diceSetName, dice);
-    return new DiceSet("custom", scene, dice);
+    return new DiceSet("custom", scene, dice, {});
 }
 
 export function addDice() {

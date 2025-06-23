@@ -68,6 +68,20 @@ const games = {
     },
 }
 
+const diceColors = {
+    "legion": {
+        "red_defence": 0xff6666,
+        "white_defence": 0xffffff,
+        "red_offence": 0xff6666,
+        "white_offence": 0xffffff,
+    },
+    "armada": {
+        "red": 0xff6666,
+        "blue": 0x6666ff,
+        "black": 0x333333,
+    },
+}
+
 // Function to animate the scene (without automatic rotation)
 function animate(time) {
     requestAnimationFrame(animate);
@@ -189,7 +203,8 @@ select.onchange = function() {
     if (games[select.value] == undefined) {
         diceSet = loadDiceSet(select.value, scene);
     } else {
-        diceSet = new DiceSet(select.value, scene, games[select.value]);
+        const colors = diceColors[select.value] || {};
+        diceSet = new DiceSet(select.value, scene, games[select.value], colors);
     }
 
     if (diceSet) {

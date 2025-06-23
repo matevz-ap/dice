@@ -7,17 +7,19 @@ export class Face {
     }
 
     texture() {
-        if (!this.value) return  "static/img/dice/empty.jpeg";
+        console.log(this.value);
+        if (!this.value) return null;
         else if (this.dice.diceSet.game == "custom") return `static/img/dice/custom/${this.value}.png`;
-        return `static/img/dice/${this.dice.diceSet.game}/${this.value}.webp`;
+        return `static/img/dice/${this.dice.diceSet.game}/${this.value}.png`;
     }
 }
 
 export class Dice {
-    constructor(diceSet, type, faces) {
+    constructor(diceSet, type, faces, color = 0xffffff) {
         this.diceSet = diceSet;
         this.type = type;
         this.mesh = null;
+        this.color = color;
         this.faces = this.initFaces(faces);  
     }
 
@@ -38,23 +40,25 @@ export class Dice {
         for (const face of this.faces) {
             faces.push(face.texture());
         }
-        this.mesh = createDice(this.diceSet.scene, -3 + index * 2, 0, 0, faces);
+        this.mesh = createDice(this.diceSet.scene, -3 + index * 2, 0, 0, faces, this.color);
         return this.mesh;
     }
 }
 
 export class DiceSet {
-    constructor(game, scene, dice) {
+    constructor(game, scene, dice, colors = {}) {
         this.game = game;
         this.scene = scene;
         this.diceMeshes = [];
+        this.colors = colors;
         this.dice = this.initDice(dice);
     }
 
     initDice(dice) {
         const diceSet = [];
         for (const [type, faces] of Object.entries(dice)) {
-            diceSet.push(new Dice(this, type, faces));
+            const color = this.colors[type] || 0xffffff;
+            diceSet.push(new Dice(this, type, faces, color));
         }
         return diceSet;
     }

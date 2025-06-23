@@ -1,61 +1,38 @@
 const size = 1.5; // Size of the dice
 
-function createRoundedBoxGeometry(length, radius = 0.15, smoothness = 2) {
-    const shape = new THREE.Shape();
-    const eps = 0.00001;
-    const radius0 = radius - eps;
-    const l = length - radius * 2;
-
-    shape.absarc(eps, eps, eps, -Math.PI / 2, -Math.PI, true);
-    shape.absarc(eps, l + eps, eps, Math.PI, Math.PI / 2, true);
-    shape.absarc(l + eps, l + eps, eps, Math.PI / 2, 0, true);
-    shape.absarc(l + eps, eps, eps, 0, -Math.PI / 2, true);
-
-    const geometry = new THREE.ExtrudeGeometry(shape, {
-        depth: l,
-        bevelEnabled: true,
-        bevelSegments: smoothness * 2,
-        steps: 1,
-        bevelSize: radius0,
-        bevelThickness: radius,
-        curveSegments: smoothness,
-    });
-
-    geometry.center();
-    return geometry;
-}
-
-export function createDice(scene, x, y, z, faces) {
+export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
     const loader = new THREE.TextureLoader();
-    const textures = faces.map(face => loader.load(face));
-
-    // Geometry for the dice with rounded edges
-    const geometry = createRoundedBoxGeometry(size, 0.2, 3);
-
-    // Use MeshStandardMaterial for realistic shading
-    const materials = textures.map(texture =>
-        new THREE.MeshStandardMaterial({
-            map: texture,
-            color: 0xf8f8f8,
-            roughness: 0.5,
-            metalness: 0.2,
-        })
-    );
+    
+    const materials = [];
+    for (let i = 0; i < 6; i++) {
+        const face = faces[i] || "";
+        
+        if (face && face !== "" && face.includes('.') && (face.includes('.png') || face.includes('.jpg') || face.includes('.jpeg') || face.includes('.webp'))) {
+            const texture = loader.load(face);
+            
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xC1C1C1,
+                map: texture,
+                transparent: true,
+            });
+            materials.push(material);
+        } else {
+            const materialColor = face === "" ? 0xffffff : diceColor;
+            const material = new THREE.MeshBasicMaterial({
+                color: materialColor,
+            });
+            materials.push(material);
+        }
+    }
+    
+    // Use BoxGeometry with more segments for subtle rounded edges
+    const geometry = new THREE.BoxGeometry(size, size, size, 3, 3, 3);
 
     const dice = new THREE.Mesh(geometry, materials);
     dice.castShadow = true;
 
-    // Group allows returning a single object if extra decoration is needed
     const group = new THREE.Group();
     group.add(dice);
-
-    // Subtle edges for a clean modern look
-    const edges = new THREE.EdgesGeometry(geometry);
-    const line = new THREE.LineSegments(
-        edges,
-        new THREE.LineBasicMaterial({ color: 0x333333 })
-    );
-    group.add(line);
 
     group.position.set(x, y, z);
     group.rotation.x = Math.PI / 5;
@@ -112,7 +89,9 @@ export function updateAnimations(time) {
             const q = new THREE.Quaternion().setFromAxisAngle(anim.axis, anim.angle * t);
             anim.mesh.quaternion.multiply(q);
         } else {
-            THREE.Quaternion.slerp(anim.start, anim.end, anim.mesh.quaternion, t);
+            const qm = new THREE.Quaternion();
+            qm.slerpQuaternions(anim.start, anim.end, t);
+            anim.mesh.quaternion.copy(qm);
         }
         if (t >= 1) {
             animations.splice(i, 1);
