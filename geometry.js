@@ -46,38 +46,62 @@ function createRoundedBoxGeometry(size, radius = 0.2, smoothness = 3) {
 
 export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
     const loader = new THREE.TextureLoader();
-    
-    const materials = [];
+
+    // Build a geometry with rounded edges so the dice look more realistic
+    const size = getDiceSize();
+    const baseGeometry = createRoundedBoxGeometry(size, size * 0.15, 3);
+
+    // Base cube material represents the edges of the dice
+    const baseMaterial = new THREE.MeshStandardMaterial({
+        color: diceColor,
+    });
+
+    const diceBase = new THREE.Mesh(baseGeometry, baseMaterial);
+    diceBase.castShadow = true;
+
+    const group = new THREE.Group();
+    group.add(diceBase);
+
+    const faceSize = size * 0.9; // Slightly smaller so edges remain visible
+    const planeGeom = new THREE.PlaneGeometry(faceSize, faceSize);
+
+    const transforms = [
+        { pos: [0, 0, size / 2 + 0.01], rot: [0, 0, 0] },                // Front
+        { pos: [0, 0, -size / 2 - 0.01], rot: [0, Math.PI, 0] },         // Back
+        { pos: [size / 2 + 0.01, 0, 0], rot: [0, -Math.PI / 2, 0] },     // Right
+        { pos: [-size / 2 - 0.01, 0, 0], rot: [0, Math.PI / 2, 0] },     // Left
+        { pos: [0, size / 2 + 0.01, 0], rot: [-Math.PI / 2, 0, 0] },     // Top
+        { pos: [0, -size / 2 - 0.01, 0], rot: [Math.PI / 2, 0, 0] },     // Bottom
+    ];
+
     for (let i = 0; i < 6; i++) {
         const face = faces[i] || "";
-        
-        if (face && face !== "" && face.includes('.') && (face.includes('.png') || face.includes('.jpg') || face.includes('.jpeg') || face.includes('.webp'))) {
+        let material;
+
+        if (
+            face &&
+            face !== "" &&
+            face.includes(".") &&
+            (face.includes(".png") || face.includes(".jpg") || face.includes(".jpeg") || face.includes(".webp"))
+        ) {
             const texture = loader.load(face);
-            
-            const material = new THREE.MeshStandardMaterial({
+            material = new THREE.MeshStandardMaterial({
                 color: 0xC1C1C1,
                 map: texture,
                 transparent: true,
             });
-            materials.push(material);
         } else {
             const materialColor = face === "" ? 0xffffff : diceColor;
-            const material = new THREE.MeshBasicMaterial({
+            material = new THREE.MeshBasicMaterial({
                 color: materialColor,
             });
-            materials.push(material);
         }
+
+        const plane = new THREE.Mesh(planeGeom.clone(), material);
+        plane.position.set(...transforms[i].pos);
+        plane.rotation.set(...transforms[i].rot);
+        group.add(plane);
     }
-    
-    // Build a geometry with rounded edges so the dice look more realistic
-    const size = getDiceSize();
-    const geometry = createRoundedBoxGeometry(size, size * 0.15, 3);
-
-    const dice = new THREE.Mesh(geometry, materials);
-    dice.castShadow = true;
-
-    const group = new THREE.Group();
-    group.add(dice);
 
     group.position.set(x, y, z);
     group.rotation.x = Math.PI / 5;
