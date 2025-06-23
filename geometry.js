@@ -65,6 +65,8 @@ export function createDice(scene, x, y, z, faces) {
     return group;
 }
 
+export const animations = [];
+
 export function rotateDice(dice) {
     const rotations = [
         [0, 0, 0],              // Front face
@@ -73,11 +75,30 @@ export function rotateDice(dice) {
         [0, -Math.PI / 2, 0],   // Left face
         [Math.PI / 2, 0, 0],    // Top face
         [-Math.PI / 2, 0, 0]    // Bottom face
-      ];
+    ];
 
-    // Randomly pick one of the rotations
     const random = Math.floor(Math.random() * rotations.length);
     const [x, y, z] = rotations[random];
 
-    dice.rotation.set(x, y, z);
+    const start = dice.quaternion.clone();
+    const end = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z));
+
+    animations.push({
+        mesh: dice,
+        start,
+        end,
+        startTime: performance.now(),
+        duration: 500
+    });
+}
+
+export function updateAnimations(time) {
+    for (let i = animations.length - 1; i >= 0; i--) {
+        const anim = animations[i];
+        const t = Math.min(1, (time - anim.startTime) / anim.duration);
+        THREE.Quaternion.slerp(anim.start, anim.end, anim.mesh.quaternion, t);
+        if (t >= 1) {
+            animations.splice(i, 1);
+        }
+    }
 }
