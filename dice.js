@@ -35,12 +35,12 @@ export class Dice {
         rotateDice(this.mesh);
     }
 
-    display(index) {
+    display(x, y = 0, z = 0) {
         let faces = [];
         for (const face of this.faces) {
             faces.push(face.texture());
         }
-        this.mesh = createDice(this.diceSet.scene, -3 + index * 2, 0, 0, faces, this.color);
+        this.mesh = createDice(this.diceSet.scene, x, y, z, faces, this.color);
         return this.mesh;
     }
 }
@@ -64,8 +64,22 @@ export class DiceSet {
     }
 
     display() {
+        // Remove previously displayed dice
+        for (const mesh of this.diceMeshes) {
+            this.scene.remove(mesh);
+        }
+        this.diceMeshes = [];
+
+        const dicePerRow = window.innerWidth < 768 ? 3 : 5;
+        const rows = Math.ceil(this.dice.length / dicePerRow);
+        const spacing = 2;
+
         for (let i = 0; i < this.dice.length; i++) {
-            let diceMesh = this.dice[i].display(i);
+            const row = Math.floor(i / dicePerRow);
+            const col = i % dicePerRow;
+            const x = (col - (dicePerRow - 1) / 2) * spacing;
+            const z = (row - (rows - 1) / 2) * -spacing;
+            let diceMesh = this.dice[i].display(x, 0, z);
             this.diceMeshes.push(diceMesh);
         }
     }
