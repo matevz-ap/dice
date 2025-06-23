@@ -1,5 +1,6 @@
 import { DiceSet } from './dice.js';
 import { addDiceSet, addDice, loadDiceSets, loadDiceSet } from './new_dice.js';
+import { updateAnimations } from './geometry.js';
 
 const select = document.getElementById("game");
 const rollButton = document.getElementById("roll");
@@ -68,8 +69,9 @@ const games = {
 }
 
 // Function to animate the scene (without automatic rotation)
-function animate() {
+function animate(time) {
     requestAnimationFrame(animate);
+    updateAnimations(time);
     renderer.render(scene, camera);
 }
 
@@ -172,8 +174,8 @@ window.addEventListener('resize', () => {
 //     createDice(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5, Math.random() * 5 - 2.5);
 // });
 
-// Start animation (without automatic rotation)
-animate();
+// Start animation loop
+requestAnimationFrame(animate);
 
 
 
