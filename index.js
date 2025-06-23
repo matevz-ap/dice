@@ -7,10 +7,35 @@ let diceSet;
 
 // Setting up the Three.js scene
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("diceCanvas") });
+scene.background = new THREE.Color(0xf0f0f0);
+const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+const renderer = new THREE.WebGLRenderer({
+    canvas: document.getElementById("diceCanvas"),
+    antialias: true,
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+// Basic lighting setup
+const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambient);
+const directional = new THREE.DirectionalLight(0xffffff, 0.6);
+directional.position.set(5, 10, 7.5);
+scene.add(directional);
+
+// Simple ground plane to give the dice some context
+const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(50, 50),
+    new THREE.MeshStandardMaterial({ color: 0xdddddd })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -2;
+scene.add(ground);
 
 // Camera position
 camera.position.z = 10;
