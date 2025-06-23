@@ -3,6 +3,47 @@ function getDiceSize() {
     return window.innerWidth < 768 ? 1.5 : 2;
 }
 
+// Create a box geometry with slightly rounded edges by adjusting the vertices
+// of a regular BoxGeometry. "radius" controls how far the corners are rounded
+// and "smoothness" controls the number of segments along each axis.
+function createRoundedBoxGeometry(size, radius = 0.2, smoothness = 3) {
+    const geometry = new THREE.BoxGeometry(
+        size,
+        size,
+        size,
+        smoothness,
+        smoothness,
+        smoothness,
+    );
+
+    const position = geometry.attributes.position;
+    const vertex = new THREE.Vector3();
+    const halfSize = size / 2;
+
+    for (let i = 0; i < position.count; i++) {
+        vertex.fromBufferAttribute(position, i);
+
+        const sign = new THREE.Vector3(
+            Math.sign(vertex.x),
+            Math.sign(vertex.y),
+            Math.sign(vertex.z),
+        );
+
+        const inner = new THREE.Vector3(
+            sign.x * (halfSize - radius),
+            sign.y * (halfSize - radius),
+            sign.z * (halfSize - radius),
+        );
+
+        vertex.sub(inner).normalize().multiplyScalar(radius).add(inner);
+
+        position.setXYZ(i, vertex.x, vertex.y, vertex.z);
+    }
+
+    geometry.computeVertexNormals();
+    return geometry;
+}
+
 export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
     const loader = new THREE.TextureLoader();
     
@@ -28,9 +69,9 @@ export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
         }
     }
     
-    // Use BoxGeometry with more segments for subtle rounded edges
+    // Build a geometry with rounded edges so the dice look more realistic
     const size = getDiceSize();
-    const geometry = new THREE.BoxGeometry(size, size, size, 3, 3, 3);
+    const geometry = createRoundedBoxGeometry(size, size * 0.15, 3);
 
     const dice = new THREE.Mesh(geometry, materials);
     dice.castShadow = true;
