@@ -150,22 +150,39 @@ animate();
 
 select.onchange = function() {
     scene.clear();
+    if (select.value === "") {
+        diceSet = undefined;
+        return;
+    }
+
     if (games[select.value] == undefined) {
         diceSet = loadDiceSet(select.value, scene);
     } else {
         diceSet = new DiceSet(select.value, scene, games[select.value]);
     }
-    diceSet.display()
+
+    if (diceSet) {
+        diceSet.display();
+    }
 }
 
 rollButton.addEventListener("click", function() {
-    diceSet.roll();
+    if (diceSet) {
+        diceSet.roll();
+    }
 });
 
 document.querySelector('#create_dice_set').addEventListener('click', () => {
     scene.clear();
     diceSet = addDiceSet(scene);
-    diceSet.display();
+    if (diceSet) {
+        // Append the new dice set to the select for future use
+        const option = document.createElement("option");
+        option.text = document.getElementById('dice_set_name').value;
+        option.value = option.text;
+        select.add(option);
+        diceSet.display();
+    }
     add_dice_modal.close();
 });
 document.querySelector('#add_dice').addEventListener('click', addDice);
