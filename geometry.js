@@ -1,42 +1,42 @@
-const radius = 1.5; // Size of the dice
+const size = 1.5; // Size of the dice
 
 export function createDice(scene, x, y, z, faces) {
-    let textures = [];
-    for (const face of faces) {
-        textures.push(new THREE.TextureLoader().load(face));
-    }
-    // Geometry for the dice (cube)
-    const geometry = new THREE.BoxGeometry(radius, radius, radius);
+    const loader = new THREE.TextureLoader();
+    const textures = faces.map(face => loader.load(face));
 
-    // Create an array of materials from the loaded textures. MeshStandardMaterial
-    // allows lighting to have an effect on the dice, giving it a more
-    // realistic appearance compared to MeshBasicMaterial.
-    const materials = textures.map(
-        texture => new THREE.MeshStandardMaterial({ map: texture })
+    // Geometry for the dice (cube)
+    const geometry = new THREE.BoxGeometry(size, size, size);
+
+    // Use MeshStandardMaterial for realistic shading
+    const materials = textures.map(texture =>
+        new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.5,
+            metalness: 0.2,
+        })
     );
 
-    // Wrap the dice mesh in a group so we can add decorative edges while still
-    // returning a single object that can be rotated by the rest of the code.
     const dice = new THREE.Mesh(geometry, materials);
-    const diceGroup = new THREE.Group();
-    diceGroup.add(dice);
+    dice.castShadow = true;
 
-    // Add black edges to make the dice stand out a little more.
+    // Group allows returning a single object if extra decoration is needed
+    const group = new THREE.Group();
+    group.add(dice);
+
+    // Subtle edges for a clean modern look
     const edges = new THREE.EdgesGeometry(geometry);
     const line = new THREE.LineSegments(
         edges,
-        new THREE.LineBasicMaterial({ color: 0x000000 })
+        new THREE.LineBasicMaterial({ color: 0x333333 })
     );
-    diceGroup.add(line);
+    group.add(line);
 
-    // Set the position of the dice based on the passed x, y, z
-    diceGroup.position.set(x, y, z);
-    diceGroup.rotation.x = Math.PI / 5;
-    diceGroup.rotation.y = Math.PI / 5;
+    group.position.set(x, y, z);
+    group.rotation.x = Math.PI / 5;
+    group.rotation.y = Math.PI / 5;
 
-    // Add the dice to the scene
-    scene.add(diceGroup);
-    return diceGroup;
+    scene.add(group);
+    return group;
 }
 
 export function rotateDice(dice) {

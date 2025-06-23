@@ -20,12 +20,15 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-// Basic lighting setup
-const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-scene.add(ambient);
-const directional = new THREE.DirectionalLight(0xffffff, 0.6);
+// Lighting setup
+const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+scene.add(hemi);
+const directional = new THREE.DirectionalLight(0xffffff, 0.8);
 directional.position.set(5, 10, 7.5);
+directional.castShadow = true;
 scene.add(directional);
 
 // Simple ground plane to give the dice some context
@@ -35,6 +38,7 @@ const ground = new THREE.Mesh(
 );
 ground.rotation.x = -Math.PI / 2;
 ground.position.y = -2;
+ground.receiveShadow = true;
 scene.add(ground);
 
 // Camera position
