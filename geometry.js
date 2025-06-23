@@ -1,4 +1,7 @@
-const size = 1.5; // Size of the dice
+// Dice size is a bit larger on desktop screens
+function getDiceSize() {
+    return window.innerWidth < 768 ? 1.5 : 2;
+}
 
 export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
     const loader = new THREE.TextureLoader();
@@ -26,6 +29,7 @@ export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
     }
     
     // Use BoxGeometry with more segments for subtle rounded edges
+    const size = getDiceSize();
     const geometry = new THREE.BoxGeometry(size, size, size, 3, 3, 3);
 
     const dice = new THREE.Mesh(geometry, materials);

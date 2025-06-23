@@ -181,6 +181,9 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    if (diceSet) {
+        diceSet.display();
+    }
 });
 
 // // Add another dice when the button is clicked
