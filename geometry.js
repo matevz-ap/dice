@@ -36,7 +36,7 @@ export function createDice(scene, x, y, z, faces) {
     const materials = textures.map(texture =>
         new THREE.MeshStandardMaterial({
             map: texture,
-            color: 0xffffff,
+            color: 0xf8f8f8,
             roughness: 0.5,
             metalness: 0.2,
         })
@@ -83,20 +83,37 @@ export function rotateDice(dice) {
     const start = dice.quaternion.clone();
     const end = new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z));
 
-    animations.push({
-        mesh: dice,
-        start,
-        end,
-        startTime: performance.now(),
-        duration: 500
-    });
+    if (start.angleTo(end) < 0.0001) {
+        animations.push({
+            mesh: dice,
+            start,
+            axis: new THREE.Vector3(Math.random(), Math.random(), Math.random()).normalize(),
+            angle: Math.PI * 2,
+            startTime: performance.now(),
+            duration: 300
+        });
+    } else {
+        animations.push({
+            mesh: dice,
+            start,
+            end,
+            startTime: performance.now(),
+            duration: 300
+        });
+    }
 }
 
 export function updateAnimations(time) {
     for (let i = animations.length - 1; i >= 0; i--) {
         const anim = animations[i];
         const t = Math.min(1, (time - anim.startTime) / anim.duration);
-        THREE.Quaternion.slerp(anim.start, anim.end, anim.mesh.quaternion, t);
+        if (anim.axis) {
+            anim.mesh.quaternion.copy(anim.start);
+            const q = new THREE.Quaternion().setFromAxisAngle(anim.axis, anim.angle * t);
+            anim.mesh.quaternion.multiply(q);
+        } else {
+            THREE.Quaternion.slerp(anim.start, anim.end, anim.mesh.quaternion, t);
+        }
         if (t >= 1) {
             animations.splice(i, 1);
         }
