@@ -7,10 +7,19 @@ export class Face {
     }
 
     texture() {
-        console.log(this.value);
         if (!this.value) return null;
-        else if (this.dice.diceSet.game == "custom") return `static/img/dice/custom/${this.value}.png`;
-        return `static/img/dice/${this.dice.diceSet.game}/${this.value}.png`;
+
+        const basePath =
+            this.dice.diceSet.game === "custom"
+                ? "static/img/dice/custom"
+                : `static/img/dice/${this.dice.diceSet.game}`;
+
+        if (this.value.includes(".")) {
+            return `${basePath}/${this.value}`;
+        }
+
+        const extension = this.dice.diceSet.game === "custom" ? "png" : "webp";
+        return `${basePath}/${this.value}.${extension}`;
     }
 }
 
