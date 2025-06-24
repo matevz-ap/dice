@@ -86,7 +86,7 @@ export function createDice(scene, x, y, z, faces, diceColor = 0xffffff) {
         ) {
             const texture = loader.load(face);
             material = new THREE.MeshStandardMaterial({
-                color: 0xC1C1C1,
+                color: 0xffffff,
                 map: texture,
                 transparent: true,
             });
